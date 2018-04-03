@@ -127,4 +127,17 @@ $(function(){
 		}
 
 	}
-})
+
+	// BCSlideshow('focuspic');
+	// var oFruit = document.getElementById('fruit_more');
+	// var oShownum = document.getElementById('show_count');
+	// var hasorder = localStorage.getItem('order_finish');
+	// if(hasorder)
+	// 	{
+	// 		oShownum.innerHTML = '2';
+	// 	}
+    //
+	// 	oFruit.onclick = function(){
+	// 		window.location.href = 'list.html';
+	// 	}
+});

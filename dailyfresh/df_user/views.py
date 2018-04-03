@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from df_user.models import *
+from df_goods.models import GoodsInfo
 from hashlib import sha1
 from django.http import JsonResponse, HttpResponseRedirect
 # Create your views here.
@@ -48,6 +49,7 @@ def login(request):
     user_name = request.COOKIES.get('user_name', '')
     context = {'info': '用户登录', 'error_user_name': 0,
                'error_password': 0, 'user_name': user_name,
+               'current_page': 1,
                }
     return render(request, 'df_user/login.html', context)
 
@@ -89,7 +91,19 @@ def info(request):
     user_name = request.session.get('user_name', '')
     if user_name == '':
         return redirect('/user/login')
-    context = {}
+    uid = request.session.get('id')
+    user = UserInfo.objects.filter(id=uid)
+    # 获取最近浏览过的列表
+    has_view_goods_id = request.COOKIES.get('goods_ids', '')
+    if has_view_goods_id != '':
+        ids = has_view_goods_id.split(',')
+        has_view_list = GoodsInfo.objects.filter(pk__in=ids)
+    else:
+        has_view_list = []
+    context = {'info': '个人信息', 'user_name': user_name,
+               'phone': user[0].phone, 'address': user[0].address,
+               'current_page': 1, 'has_view_list': has_view_list,
+               }
     return render(request, 'df_user/user_center_info.html', context)
 
 
@@ -97,7 +111,9 @@ def order(request):
     user_name = request.session.get('user_name', '')
     if user_name == '':
         return redirect('/user/login')
-    context = {'current_page': 'active'}
+    context = {'info': '我的订单', 'user_name': user_name,
+               'current_page': 1,
+               }
     return render(request, 'df_user/user_center_order.html', context)
 
 
@@ -105,6 +121,33 @@ def site(request):
     user_name = request.session.get('user_name', '')
     if user_name == '':
         return redirect('/user/login')
-    context = {'current_page': 'active'}
+    uid = request.session.get('id')
+    user = UserInfo.objects.filter(id=uid)
+    context = {'info': '收货地址', 'user_name': user_name,
+               'phone': user[0].phone, 'address': user[0].address,
+               'consignee': '('+user[0].consignee+'收)', 'postcode': user[0].postcode,
+               'current_page': 1,
+               }
     return render(request, 'df_user/user_center_site.html', context)
+
+
+def site_handle(request):
+    user_name = request.session.get('user_name', '')
+    if user_name == '':
+        return redirect('/user/login')
+    uid = request.session.get('id')
+    user = UserInfo.objects.get(id=uid)
+    post = request.POST
+    user.consignee = post.get('consignee', '')
+    user.address = post.get('address', '')
+    user.phone = post.get('phone', '')
+    user.postcode = post.get('postcode', '')
+    user.save()
+    context = {'info': '收货地址', 'user_name': user_name,
+               'phone': user.phone, 'address': user.address,
+               'consignee': '('+user.consignee+'收)', 'postcode': user.postcode,
+               'current_page': 1,
+               }
+    return render(request, 'df_user/user_center_site.html', context)
+
 
