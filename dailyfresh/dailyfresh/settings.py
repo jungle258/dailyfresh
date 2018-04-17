@@ -25,7 +25,7 @@ SECRET_KEY = '*zpw@ttoa)-nkzo08h=i^#*$5&_(mj3*@87y+z^$@g=jdfu2f&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'df_user',
     'df_goods',
     'tinymce',
+    'df_cart',
 )
 
 MIDDLEWARE_CLASSES = (

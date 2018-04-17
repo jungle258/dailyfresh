@@ -20,6 +20,13 @@ html,body{height:100%}
 .login_info{
 	display:none;
 }
+.login_info a{
+	color:#666;
+}
+
+.login_info a:hover{
+	color:#ff8800;
+}
 
 .login_info em{color:#ff8800}
 
@@ -369,7 +376,7 @@ html,body{height:100%}
 .cart_list_td .col08{width:18%;}
 
 .cart_list_td .col02 img{width:100px;height:100px;border:1px solid #ddd;display:block;margin:10px auto 0;}
-.cart_list_td .col03{height:48px;text-align:left;line-height:24px;margin-top:38px;}
+.cart_list_td .col03{height:48px;text-align:left;line-height:24px;margin-top:38px;overflow: hidden}
 .cart_list_td .col03 em{color:#999}
 .cart_list_td .col08 a{color:#666}
 
@@ -640,4 +647,14 @@ html,body{height:100%}
 
 .stress{
 	color:#ff8800;
+}
+
+#cart_animate{
+	width: 30px;
+	height: 30px;
+	background: #e62e2e;
+	border-radius: 50%;
+	position: absolute;
+	top: 560px;
+	left: 750px;
 }

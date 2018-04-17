@@ -3,6 +3,7 @@ from df_user.models import *
 from df_goods.models import GoodsInfo
 from hashlib import sha1
 from django.http import JsonResponse, HttpResponseRedirect
+from .user_decorator import login_decorator
 # Create your views here.
 
 
@@ -65,7 +66,8 @@ def login_handle(request):
         s1 = sha1()
         s1.update(password.encode('utf8'))
         if s1.hexdigest() == user[0].password:
-            red = HttpResponseRedirect('/user/info')
+            url = request.COOKIES.get('url', '/')
+            red = HttpResponseRedirect(url)
             if remember != 0:
                 red.set_cookie('user_name', user_name)
             else:
@@ -87,10 +89,15 @@ def login_handle(request):
         return render(request, 'df_user/login.html', context)
 
 
+def login_off(request):
+    request.session.flush()
+    red = HttpResponseRedirect('/')
+    return red
+
+
+@login_decorator
 def info(request):
     user_name = request.session.get('user_name', '')
-    if user_name == '':
-        return redirect('/user/login')
     uid = request.session.get('id')
     user = UserInfo.objects.filter(id=uid)
     # 获取最近浏览过的列表
@@ -103,38 +110,36 @@ def info(request):
     context = {'info': '个人信息', 'user_name': user_name,
                'phone': user[0].phone, 'address': user[0].address,
                'current_page': 1, 'has_view_list': has_view_list,
+               'current_model': '用户中心',
                }
     return render(request, 'df_user/user_center_info.html', context)
 
 
+@login_decorator
 def order(request):
     user_name = request.session.get('user_name', '')
-    if user_name == '':
-        return redirect('/user/login')
     context = {'info': '我的订单', 'user_name': user_name,
-               'current_page': 1,
+               'current_page': 1, 'current_model': '用户中心',
                }
     return render(request, 'df_user/user_center_order.html', context)
 
 
+@login_decorator
 def site(request):
     user_name = request.session.get('user_name', '')
-    if user_name == '':
-        return redirect('/user/login')
     uid = request.session.get('id')
     user = UserInfo.objects.filter(id=uid)
     context = {'info': '收货地址', 'user_name': user_name,
                'phone': user[0].phone, 'address': user[0].address,
                'consignee': '('+user[0].consignee+'收)', 'postcode': user[0].postcode,
-               'current_page': 1,
+               'current_page': 1, 'current_model': '用户中心',
                }
     return render(request, 'df_user/user_center_site.html', context)
 
 
+@login_decorator
 def site_handle(request):
     user_name = request.session.get('user_name', '')
-    if user_name == '':
-        return redirect('/user/login')
     uid = request.session.get('id')
     user = UserInfo.objects.get(id=uid)
     post = request.POST
@@ -146,7 +151,7 @@ def site_handle(request):
     context = {'info': '收货地址', 'user_name': user_name,
                'phone': user.phone, 'address': user.address,
                'consignee': '('+user.consignee+'收)', 'postcode': user.postcode,
-               'current_page': 1,
+               'current_page': 1, 'current_model': '用户中心',
                }
     return render(request, 'df_user/user_center_site.html', context)
 
